@@ -1,0 +1,67 @@
+﻿.tag-wrapper {
+    display: flex;
+    flex-flow: column;
+    gap: 10px;
+    margin: 5px;
+    border: 1px dashed #dcdcdc;
+    border-radius: 4px;
+    padding: 5px;
+    .tags
+
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    a
+
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+    padding: 5px;
+    font-size: 12px;
+    background: #dcdcdc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.tag {
+    transition: all 0.3s ease-in-out;
+}
+
+.tag-added {
+    transform: scale(1.1);
+    a
+
+{
+    color: #fff;
+    background: #4caf50;
+}
+
+}
+}
+
+.tag-removed {
+    transform: scale(0.9);
+    a
+
+{
+    color: #fff;
+    background: #e95e51;
+}
+
+}
+}
+
+input {
+    width: 80px;
+    border: 0;
+}
+
+    input:focus-visible {
+        outline: none;
+    }
+
+}

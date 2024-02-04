@@ -1,0 +1,88 @@
+﻿
+<div class="tag-wrapper">
+    <div class="tags">
+        @foreach (var tag in _tags)
+        {
+            var className = tag switch
+            {
+                _ when StringComparer.OrdinalIgnoreCase.Equals(tag, _tagAdded) => "tag tag-added",
+                _ when StringComparer.OrdinalIgnoreCase.Equals(tag, _tagRemoved) => "tag tag-removed",
+                _ => "tag"
+            };
+
+            <div class="@className">
+                <a @onclick="()=>RemoveTag(tag)">
+                    <span>@tag</span>
+                    <span class="text-danger">X</span>
+                </a>
+            </div>
+        }
+        <input type="text" @bind-value="_tag" @bind-value:event="oninput" @onkeydown="HandleKeydown" />
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string Tags { get; set; }
+
+    [Parameter]
+    public string Seperator { get; set; }
+
+    [Parameter]
+    public EventCallback<string> TagsChanged { get; set; }
+
+    List<string> _tags = new();
+
+    string _tag = string.Empty;
+
+    string _tagRemoved = null;
+    string _tagAdded = null;
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrWhiteSpace(Tags))
+        {
+            _tags = Tags.Split(Seperator).ToList();
+        }
+    }
+
+    async Task HandleKeydown(KeyboardEventArgs arg)
+    {
+        if (arg.Code == "Enter" || arg.Code == "NumpadEnter")
+        {
+            if (!string.IsNullOrWhiteSpace(_tag) && !_tag.Contains(Seperator) && !_tags.Any(_ => _.Equals(_tag.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
+                _tags.Add(_tag.Trim());
+
+                _tagAdded = _tag.Trim();
+                await Task.Delay(200);
+                _tagAdded = null;
+                _tag = string.Empty;
+
+                UpdateTags();
+            }
+        }
+    }
+
+    async Task RemoveTag(string tag)
+    {
+        var index = _tags.FindIndex(_ => _.Equals(tag, StringComparison.OrdinalIgnoreCase));
+
+        _tagRemoved = tag;
+        await Task.Delay(250);
+        _tags.RemoveAt(index);
+        _tagRemoved = null;
+        UpdateTags();
+    }
+
+    void UpdateTags()
+    {
+        Tags = string.Join(Seperator, _tags);
+
+        TagsChanged.InvokeAsync(Tags);
+    }
+
+    string GetTags() => Tags;
+}
